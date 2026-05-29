@@ -51,14 +51,14 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun setDailyGoal(goal: Int) {
-        viewModelScope.launch { settings.setDailyGoal(goal) }
+        settings.setDailyGoal(goal)
     }
 
     fun setReminderInterval(minutes: Int) {
-        viewModelScope.launch { settings.setReminderInterval(minutes) }
+        settings.setReminderInterval(minutes)
     }
 
     fun setReminderEnabled(enabled: Boolean) {
-        viewModelScope.launch { settings.setReminderEnabled(enabled) }
+        settings.setReminderEnabled(enabled)
     }
 }

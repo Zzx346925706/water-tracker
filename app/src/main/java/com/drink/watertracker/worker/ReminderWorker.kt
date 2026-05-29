@@ -5,12 +5,10 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import androidx.core.app.NotificationCompat
-import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.work.*
 import com.drink.watertracker.MainActivity
-import com.drink.watertracker.R
 import com.drink.watertracker.WaterApp
-import com.drink.watertracker.widget.WaterWidget
+import com.drink.watertracker.widget.WaterWidgetHelper
 import kotlinx.coroutines.flow.first
 import java.util.concurrent.TimeUnit
 
@@ -53,9 +51,7 @@ class ReminderWorker(
 
         // Update widget
         try {
-            val glanceIds = GlanceAppWidgetManager(applicationContext)
-                .getGlanceIds(WaterWidget::class.java)
-            glanceIds.forEach { WaterWidget.update(applicationContext, it) }
+            WaterWidgetHelper.updateAll(applicationContext)
         } catch (_: Exception) {}
 
         return Result.success()
@@ -74,11 +70,6 @@ object ReminderScheduler {
             intervalMinutes.toLong(), TimeUnit.MINUTES
         )
             .setInitialDelay(intervalMinutes.toLong(), TimeUnit.MINUTES)
-            .setConstraints(
-                Constraints.Builder()
-                    .setRequiresBatteryNotLow(false)
-                    .build()
-            )
             .build()
 
         WorkManager.getInstance(appContext).enqueueUniquePeriodicWork(

@@ -2,7 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <application
         android:name=".WaterApp"
@@ -23,7 +22,6 @@
             </intent-filter>
         </activity>
 
-        <!-- Widget Provider -->
         <receiver
             android:name=".widget.WaterWidgetReceiver"
             android:exported="true">
@@ -35,10 +33,13 @@
                 android:resource="@xml/water_widget_info" />
         </receiver>
 
-        <!-- Widget click receiver -->
         <receiver
-            android:name=".widget.WidgetClickReceiver"
-            android:exported="false" />
+            android:name=".widget.WidgetActionReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.drink.watertracker.ADD_WATER" />
+            </intent-filter>
+        </receiver>
 
     </application>
 </manifest>

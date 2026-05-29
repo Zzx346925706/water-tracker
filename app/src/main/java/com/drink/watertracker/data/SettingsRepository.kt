@@ -1,37 +1,35 @@
 package com.drink.watertracker.data
 
 import android.content.Context
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.*
-import androidx.datastore.preferences.preferencesDataStore
+import android.content.SharedPreferences
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
-val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
+class SettingsRepository(context: Context) {
+    private val prefs: SharedPreferences =
+        context.getSharedPreferences("settings", Context.MODE_PRIVATE)
 
-object PreferenceKeys {
-    val DAILY_GOAL = intPreferencesKey("daily_goal")       // ml
-    val REMINDER_INTERVAL = intPreferencesKey("reminder_interval") // minutes
-    val REMINDER_ENABLED = booleanPreferencesKey("reminder_enabled")
-}
+    private val _dailyGoal = MutableStateFlow(prefs.getInt("daily_goal", 2000))
+    private val _reminderInterval = MutableStateFlow(prefs.getInt("reminder_interval", 60))
+    private val _reminderEnabled = MutableStateFlow(prefs.getBoolean("reminder_enabled", true))
 
-class SettingsRepository(private val context: Context) {
+    val dailyGoal: Flow<Int> = _dailyGoal.asStateFlow()
+    val reminderInterval: Flow<Int> = _reminderInterval.asStateFlow()
+    val reminderEnabled: Flow<Boolean> = _reminderEnabled.asStateFlow()
 
-    val dailyGoal: Flow<Int> = context.dataStore.data.map { it[PreferenceKeys.DAILY_GOAL] ?: 2000 }
-
-    val reminderInterval: Flow<Int> = context.dataStore.data.map { it[PreferenceKeys.REMINDER_INTERVAL] ?: 60 }
-
-    val reminderEnabled: Flow<Boolean> = context.dataStore.data.map { it[PreferenceKeys.REMINDER_ENABLED] ?: true }
-
-    suspend fun setDailyGoal(goal: Int) {
-        context.dataStore.edit { it[PreferenceKeys.DAILY_GOAL] = goal }
+    fun setDailyGoal(goal: Int) {
+        prefs.edit().putInt("daily_goal", goal).apply()
+        _dailyGoal.value = goal
     }
 
-    suspend fun setReminderInterval(minutes: Int) {
-        context.dataStore.edit { it[PreferenceKeys.REMINDER_INTERVAL] = minutes }
+    fun setReminderInterval(minutes: Int) {
+        prefs.edit().putInt("reminder_interval", minutes).apply()
+        _reminderInterval.value = minutes
     }
 
-    suspend fun setReminderEnabled(enabled: Boolean) {
-        context.dataStore.edit { it[PreferenceKeys.REMINDER_ENABLED] = enabled }
+    fun setReminderEnabled(enabled: Boolean) {
+        prefs.edit().putBoolean("reminder_enabled", enabled).apply()
+        _reminderEnabled.value = enabled
     }
 }
