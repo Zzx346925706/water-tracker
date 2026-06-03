@@ -4,6 +4,11 @@ import androidx.room.*
 import kotlinx.coroutines.flow.Flow
 import java.time.LocalDate
 
+data class DailyTotal(
+    val date: String,
+    val total: Int
+)
+
 @Entity(tableName = "water_records")
 data class WaterRecord(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
@@ -28,6 +33,9 @@ interface WaterDao {
 
     @Query("SELECT DISTINCT date FROM water_records ORDER BY date DESC LIMIT 30")
     fun getRecentDates(): Flow<List<String>>
+
+    @Query("SELECT date, COALESCE(SUM(amount), 0) as total FROM water_records WHERE date >= :startDate GROUP BY date ORDER BY date ASC")
+    fun getDailyTotals(startDate: String): Flow<List<DailyTotal>>
 }
 
 @Database(entities = [WaterRecord::class], version = 1, exportSchema = false)

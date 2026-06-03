@@ -5,14 +5,16 @@ import android.appwidget.AppWidgetProvider
 import android.content.Context
 import android.content.Intent
 
-class WaterWidgetReceiver : AppWidgetProvider() {
+class WaterWidgetReceiver1x1 : AppWidgetProvider() {
 
     override fun onUpdate(
         context: Context,
         appWidgetManager: AppWidgetManager,
         appWidgetIds: IntArray
     ) {
-        WaterWidgetHelper.updateAll(context)
+        for (appWidgetId in appWidgetIds) {
+            WaterWidgetHelper.updateAll(context)
+        }
     }
 
     override fun onEnabled(context: Context) {

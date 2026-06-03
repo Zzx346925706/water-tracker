@@ -12,6 +12,7 @@ import androidx.compose.runtime.*
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.drink.watertracker.ui.MainViewModel
+import com.drink.watertracker.ui.screens.HistoryScreen
 import com.drink.watertracker.ui.screens.HomeScreen
 import com.drink.watertracker.ui.screens.SettingsScreen
 import com.drink.watertracker.ui.theme.WaterTrackerTheme
@@ -38,12 +39,12 @@ class MainActivity : ComponentActivity() {
         setContent {
             WaterTrackerTheme {
                 val vm: MainViewModel = viewModel()
-                var showSettings by remember { mutableStateOf(false) }
+                var currentPage by remember { mutableStateOf("home") }
 
                 AnimatedContent(
-                    targetState = showSettings,
+                    targetState = currentPage,
                     transitionSpec = {
-                        if (targetState) {
+                        if (targetState != "home") {
                             slideInHorizontally { it } + fadeIn() togetherWith
                                     slideOutHorizontally { -it } + fadeOut()
                         } else {
@@ -52,11 +53,15 @@ class MainActivity : ComponentActivity() {
                         }
                     },
                     label = "nav"
-                ) { settings ->
-                    if (settings) {
-                        SettingsScreen(vm, onBack = { showSettings = false })
-                    } else {
-                        HomeScreen(vm, onNavigateToSettings = { showSettings = true })
+                ) { page ->
+                    when (page) {
+                        "settings" -> SettingsScreen(vm, onBack = { currentPage = "home" })
+                        "history" -> HistoryScreen(vm, onBack = { currentPage = "home" })
+                        else -> HomeScreen(
+                            vm,
+                            onNavigateToSettings = { currentPage = "settings" },
+                            onNavigateToHistory = { currentPage = "history" }
+                        )
                     }
                 }
             }
@@ -65,7 +70,6 @@ class MainActivity : ComponentActivity() {
 
     override fun onResume() {
         super.onResume()
-        // Ensure reminder is scheduled
         val enabled = getSharedPreferences("settings", MODE_PRIVATE)
             .getBoolean("reminder_enabled", true)
         if (enabled) {

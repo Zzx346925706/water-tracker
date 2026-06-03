@@ -4,10 +4,16 @@
     android:height="108dp"
     android:viewportWidth="108"
     android:viewportHeight="108">
+    <!-- 背景圆 -->
     <path
-        android:fillColor="#2196F3"
-        android:pathData="M54,10C29.7,10 10,29.7 10,54s19.7,44 44,44s44,-19.7 44,-44S78.3,10 54,10z" />
+        android:fillColor="#FFFFD600"
+        android:pathData="M54,54m-40,0a40,40 0,1 1,80 0a40,40 0,1 1,-80 0" />
+    <!-- 水滴 -->
     <path
-        android:fillColor="#FFFFFF"
-        android:pathData="M54,25C54,25 35,45 35,58c0,10.5 8.5,19 19,19s19,-8.5 19,-19C73,45 54,25 54,25zM54,70c-7.2,0 -13,-5.8 -13,-13c0,-5.4 8,-18.5 13,-24.4c5,5.9 13,19 13,24.4C67,64.2 61.2,70 54,70z" />
+        android:fillColor="#FF2196F3"
+        android:pathData="M54,30 C54,30 40,50 40,60 C40,67.7 46.3,74 54,74 C61.7,74 68,67.7 68,60 C68,50 54,30 54,30Z" />
+    <!-- 水滴高光 -->
+    <path
+        android:fillColor="#64FFFFFF"
+        android:pathData="M54,38 C54,38 46,52 46,58 C46,62.4 49.6,66 54,66 C58.4,66 62,62.4 62,58 C62,52 54,38 54,38Z" />
 </vector>

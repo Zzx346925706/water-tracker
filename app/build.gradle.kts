@@ -12,8 +12,8 @@ android {
         applicationId = "com.drink.watertracker"
         minSdk = 26
         targetSdk = 34
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 7
+        versionName = "1.7.0"
         vectorDrawables.useSupportLibrary = true
     }
 
@@ -53,6 +53,9 @@ dependencies {
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3")
     implementation("androidx.compose.material:material-icons-extended")
+
+    // Coil for image loading
+    implementation("io.coil-kt:coil-compose:2.5.0")
 
     // Room
     implementation("androidx.room:room-runtime:2.6.1")

@@ -1,8 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="primary">#2196F3</color>
-    <color name="primary_dark">#1565C0</color>
-    <color name="accent">#03A9F4</color>
+    <!-- 蜡笔小新主题色 -->
+    <color name="primary">#FFFF6F00</color>
+    <color name="primary_dark">#FFE65100</color>
+    <color name="accent">#FFFF8F00</color>
     <color name="white">#FFFFFF</color>
-    <color name="bg_light">#F8FBFF</color>
+    <color name="bg_light">#FFFFF8E1</color>
+
+    <!-- 小新经典色 -->
+    <color name="shincan_yellow">#FFFFD600</color>
+    <color name="shincan_red">#FFE53935</color>
+    <color name="shincan_brown">#FF795548</color>
+    <color name="shincan_blue">#FF1565C0</color>
+    <color name="shincan_pink">#FFF48FB1</color>
+    <color name="shincan_green">#FF66BB6A</color>
 </resources>

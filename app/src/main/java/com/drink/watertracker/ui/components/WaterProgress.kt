@@ -17,6 +17,7 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.drink.watertracker.ui.theme.ShinchanTheme
 
 @Composable
 fun WaterProgress(
@@ -31,8 +32,9 @@ fun WaterProgress(
         label = "progress"
     )
 
-    val waterColor = MaterialTheme.colorScheme.primary
-    val bgColor = MaterialTheme.colorScheme.surfaceVariant
+    val dayTheme = ShinchanTheme.todayTheme()
+    val waterColor = dayTheme.primary
+    val bgColor = dayTheme.surface
 
     Box(
         modifier = modifier.size(200.dp),
@@ -43,7 +45,7 @@ fun WaterProgress(
             val padding = stroke / 2
             val arcSize = Size(size.width - stroke, size.height - stroke)
 
-            // Background
+            // 背景圆环
             drawArc(
                 color = bgColor,
                 startAngle = -90f,
@@ -54,7 +56,7 @@ fun WaterProgress(
                 style = Stroke(width = stroke, cap = StrokeCap.Round)
             )
 
-            // Progress
+            // 进度圆环
             drawArc(
                 color = waterColor,
                 startAngle = -90f,
@@ -64,9 +66,26 @@ fun WaterProgress(
                 size = arcSize,
                 style = Stroke(width = stroke, cap = StrokeCap.Round)
             )
+
+            // 装饰小圆点
+            if (animatedProgress > 0f) {
+                val angle = (-90f + animatedProgress * 360f)
+                val radians = Math.toRadians(angle.toDouble())
+                val cx = padding + arcSize.width / 2 + (arcSize.width / 2) * cos(radians).toFloat()
+                val cy = padding + arcSize.height / 2 + (arcSize.height / 2) * sin(radians).toFloat()
+                drawCircle(
+                    color = Color.White,
+                    radius = 10f,
+                    center = Offset(cx, cy)
+                )
+            }
         }
 
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Text(
+                text = "${dayTheme.emoji}",
+                fontSize = 32.sp
+            )
             Text(
                 text = "${current}ml",
                 fontSize = 28.sp,
@@ -87,3 +106,6 @@ fun WaterProgress(
         }
     }
 }
+
+private fun cos(radians: Double): Double = kotlin.math.cos(radians)
+private fun sin(radians: Double): Double = kotlin.math.sin(radians)

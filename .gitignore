@@ -8,3 +8,10 @@
 .externalNativeBuild
 .cxx
 local.properties
+
+# Build outputs
+app/build/
+*.apk
+
+# Gradle wrapper jar
+gradle/wrapper/gradle-wrapper.jar

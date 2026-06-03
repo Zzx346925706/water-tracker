@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">喝水助手</string>
+    <string name="widget_name">喝水助手 2×2</string>
+    <string name="widget_name_4x2">喝水助手 4×2</string>
+    <string name="widget_description">提醒你喝水的桌面小组件</string>
 </resources>
