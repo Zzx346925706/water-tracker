@@ -36,6 +36,9 @@ interface WaterDao {
 
     @Query("SELECT date, COALESCE(SUM(amount), 0) as total FROM water_records WHERE date >= :startDate GROUP BY date ORDER BY date ASC")
     fun getDailyTotals(startDate: String): Flow<List<DailyTotal>>
+
+    @Query("SELECT date, COALESCE(SUM(amount), 0) as total FROM water_records GROUP BY date ORDER BY date ASC")
+    fun getAllTotals(): Flow<List<DailyTotal>>
 }
 
 @Database(entities = [WaterRecord::class], version = 1, exportSchema = false)

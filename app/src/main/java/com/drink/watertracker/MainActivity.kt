@@ -12,9 +12,7 @@ import androidx.compose.runtime.*
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.drink.watertracker.ui.MainViewModel
-import com.drink.watertracker.ui.screens.HistoryScreen
-import com.drink.watertracker.ui.screens.HomeScreen
-import com.drink.watertracker.ui.screens.SettingsScreen
+import com.drink.watertracker.ui.screens.*
 import com.drink.watertracker.ui.theme.WaterTrackerTheme
 import com.drink.watertracker.worker.ReminderScheduler
 
@@ -27,7 +25,6 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Request notification permission on Android 13+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
                 != PackageManager.PERMISSION_GRANTED
@@ -57,10 +54,14 @@ class MainActivity : ComponentActivity() {
                     when (page) {
                         "settings" -> SettingsScreen(vm, onBack = { currentPage = "home" })
                         "history" -> HistoryScreen(vm, onBack = { currentPage = "home" })
+                        "achievements" -> AchievementsScreen(vm, onBack = { currentPage = "home" })
+                        "share" -> ShareScreen(vm, onBack = { currentPage = "home" })
                         else -> HomeScreen(
                             vm,
                             onNavigateToSettings = { currentPage = "settings" },
-                            onNavigateToHistory = { currentPage = "history" }
+                            onNavigateToHistory = { currentPage = "history" },
+                            onNavigateToAchievements = { currentPage = "achievements" },
+                            onNavigateToShare = { currentPage = "share" }
                         )
                     }
                 }

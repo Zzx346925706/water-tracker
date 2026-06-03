@@ -359,7 +359,7 @@ fun SettingsScreen(
 
                 Spacer(Modifier.height(12.dp))
 
-                // 关于
+                // 数据管理
                 Card(
                     shape = RoundedCornerShape(16.dp),
                     colors = CardDefaults.cardColors(
@@ -367,7 +367,7 @@ fun SettingsScreen(
                     )
                 ) {
                     Column(modifier = Modifier.padding(16.dp)) {
-                        Text("💖 关于", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+                        Text("💾 数据管理", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
                         Spacer(Modifier.height(8.dp))
                         Row(
                             modifier = Modifier.fillMaxWidth(),
@@ -390,31 +390,34 @@ fun SettingsScreen(
                                 Text("桌面组件", fontSize = 12.sp, color = Color.Gray)
                             }
                         }
-                        Spacer(Modifier.height(8.dp))
-                        Text(
-                            "每天不同颜色主题，陪你喝够水！",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = Color.Gray,
-                            modifier = Modifier.fillMaxWidth(),
-                            textAlign = TextAlign.Center
-                        )
                     }
                 }
 
                 Spacer(Modifier.weight(1f))
 
-                Text(
-                    "Powered by 薛定谔的猫 🐱",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = Color.White.copy(alpha = 0.7f),
+                // 底部信息
+                Card(
+                    shape = RoundedCornerShape(12.dp),
+                    colors = CardDefaults.cardColors(
+                        containerColor = Color.Black.copy(alpha = 0.4f)
+                    ),
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(bottom = 8.dp),
-                    textAlign = TextAlign.Center
-                )
+                        .padding(horizontal = 16.dp, vertical = 8.dp)
+                ) {
+                    Text(
+                        "Powered by 薛定谔的猫 🐱",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = Color.White,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 10.dp),
+                        textAlign = TextAlign.Center
+                    )
+                }
 
                 Text(
-                    "V1.6.0",
+                    "V1.8.0",
                     style = MaterialTheme.typography.labelSmall,
                     color = Color.White.copy(alpha = 0.5f),
                     modifier = Modifier

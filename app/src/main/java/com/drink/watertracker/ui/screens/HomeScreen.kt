@@ -32,7 +32,9 @@ import java.time.format.DateTimeFormatter
 fun HomeScreen(
     viewModel: MainViewModel,
     onNavigateToSettings: () -> Unit,
-    onNavigateToHistory: () -> Unit
+    onNavigateToHistory: () -> Unit,
+    onNavigateToAchievements: () -> Unit,
+    onNavigateToShare: () -> Unit
 ) {
     val total by viewModel.todayTotal.collectAsState()
     val goal by viewModel.dailyGoal.collectAsState()
@@ -211,6 +213,63 @@ fun HomeScreen(
                     Spacer(Modifier.height(12.dp))
                 }
 
+                // 功能入口
+                item {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(10.dp)
+                    ) {
+                        // 成就徽章
+                        Card(
+                            onClick = onNavigateToAchievements,
+                            modifier = Modifier.weight(1f),
+                            shape = RoundedCornerShape(14.dp),
+                            colors = CardDefaults.cardColors(
+                                containerColor = Color.White.copy(alpha = 0.85f)
+                            )
+                        ) {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(14.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text("🏆", fontSize = 28.sp)
+                                Spacer(Modifier.width(8.dp))
+                                Column {
+                                    Text("成就徽章", fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                                    Text("解锁小新的徽章", fontSize = 11.sp, color = Color.Gray)
+                                }
+                            }
+                        }
+
+                        // 分享今日
+                        Card(
+                            onClick = onNavigateToShare,
+                            modifier = Modifier.weight(1f),
+                            shape = RoundedCornerShape(14.dp),
+                            colors = CardDefaults.cardColors(
+                                containerColor = Color.White.copy(alpha = 0.85f)
+                            )
+                        ) {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(14.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text("📤", fontSize = 28.sp)
+                                Spacer(Modifier.width(8.dp))
+                                Column {
+                                    Text("分享今日", fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                                    Text("生成饮水卡片", fontSize = 11.sp, color = Color.Gray)
+                                }
+                            }
+                        }
+                    }
+                    Spacer(Modifier.height(12.dp))
+                }
+
                 // 今日记录
                 item {
                     Text(
@@ -330,7 +389,7 @@ fun HomeScreen(
                 item {
                     Spacer(Modifier.height(8.dp))
                     Text(
-                        "V1.5.0",
+                        "V1.8.0",
                         style = MaterialTheme.typography.labelSmall,
                         color = Color.White.copy(alpha = 0.5f),
                         modifier = Modifier.fillMaxWidth(),
