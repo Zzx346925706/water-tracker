@@ -12,8 +12,8 @@ android {
         applicationId = "com.drink.watertracker"
         minSdk = 26
         targetSdk = 34
-        versionCode = 8
-        versionName = "1.8.0"
+        versionCode = 10
+        versionName = "1.9.1"
         vectorDrawables.useSupportLibrary = true
     }
 

@@ -36,6 +36,9 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     val reminderEnabled: StateFlow<Boolean> = settings.reminderEnabled
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), true)
 
+    val reminderMessage: StateFlow<String> = settings.reminderMessage
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), "")
+
     private val _backgroundUri = MutableStateFlow(
         prefs.getString("background_uri", "") ?: ""
     )
@@ -49,6 +52,11 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     // 月度历史数据
     val monthlyHistory: StateFlow<List<DailyTotal>> = dao.getDailyTotals(
         LocalDate.now().minusDays(30).format(DateTimeFormatter.ISO_LOCAL_DATE)
+    ).stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+    // 周度历史数据
+    val weeklyHistory: StateFlow<List<DailyTotal>> = dao.getDailyTotals(
+        LocalDate.now().minusDays(6).format(DateTimeFormatter.ISO_LOCAL_DATE)
     ).stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     // 成就相关
@@ -198,6 +206,127 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             desc = "单次喝500ml", unlocked = hasBigDrink
         ))
 
+        // === 新增成就 ===
+
+        // 16. 小新的周末冒险 🎪 (周六或周日也达标)
+        val todayDayOfWeek = java.time.LocalDate.now().dayOfWeek.value
+        val isWeekend = todayDayOfWeek == 6 || todayDayOfWeek == 7
+        val weekendGoalMet = isWeekend && todayTotal >= goal
+        badges.add(com.drink.watertracker.ui.screens.Badge(
+            id = "weekend_warrior", emoji = "🎪", name = "周末冒险",
+            desc = "周末也坚持达标", unlocked = weekendGoalMet
+        ))
+
+        // 17. 午间充电 ⚡ (12-14点喝水)
+        val noonRecords = todayRecords.value.filter {
+            val hour = java.time.Instant.ofEpochMilli(it.timestamp)
+                .atZone(java.time.ZoneId.systemDefault()).hour
+            hour in 12..13
+        }
+        badges.add(com.drink.watertracker.ui.screens.Badge(
+            id = "noon_charge", emoji = "⚡", name = "午间充电",
+            desc = "午休时喝水", unlocked = noonRecords.isNotEmpty()
+        ))
+
+        // 18. 水滴石穿 💎 (累计100天记录)
+        badges.add(com.drink.watertracker.ui.screens.Badge(
+            id = "days_100", emoji = "💎", name = "水滴石穿",
+            desc = "累计记录100天", unlocked = totalDays >= 100,
+            progress = if (totalDays < 100) "$totalDays/100天" else "已解锁"
+        ))
+
+        // 19. 海量选手 🐋 (累计200L)
+        badges.add(com.drink.watertracker.ui.screens.Badge(
+            id = "total_200l", emoji = "🐋", name = "海量选手",
+            desc = "累计喝200L水", unlocked = totalMl >= 200000,
+            progress = if (totalMl < 200000) "${totalMl / 1000}L/200L" else "已解锁"
+        ))
+
+        // 20. 小新的零食时间 🍪 (喝水间隔<30分钟，连续2次)
+        val recordsSorted = todayRecords.value.sortedBy { it.timestamp }
+        var quickRepeat = false
+        for (i in 1 until recordsSorted.size) {
+            if (recordsSorted[i].timestamp - recordsSorted[i - 1].timestamp < 30 * 60 * 1000) {
+                quickRepeat = true; break
+            }
+        }
+        badges.add(com.drink.watertracker.ui.screens.Badge(
+            id = "quick_repeat", emoji = "🍪", name = "零食时间",
+            desc = "30分钟内喝两次", unlocked = quickRepeat
+        ))
+
+        // 21. 精打细算 🧮 (刚好达标，误差<5%)
+        badges.add(com.drink.watertracker.ui.screens.Badge(
+            id = "precise", emoji = "🧮", name = "精打细算",
+            desc = "达标误差<5%", unlocked = goal > 0 && todayTotal >= goal && todayTotal < goal * 1.05f
+        ))
+
+        // 22. 超级赛亚人 💪 (连续达标50天)
+        badges.add(com.drink.watertracker.ui.screens.Badge(
+            id = "streak_50", emoji = "💪", name = "超级赛亚人",
+            desc = "连续达标50天", unlocked = streakDays >= 50,
+            progress = if (streakDays < 50) "$streakDays/50天" else "已解锁"
+        ))
+
+        // 23. 水之传说 🏆 (连续达标100天)
+        badges.add(com.drink.watertracker.ui.screens.Badge(
+            id = "streak_100", emoji = "🏆", name = "水之传说",
+            desc = "连续达标100天", unlocked = streakDays >= 100,
+            progress = if (streakDays < 100) "$streakDays/100天" else "已解锁"
+        ))
+
+        // 24. 五次郎 🖐️ (今天喝5次以上)
+        badges.add(com.drink.watertracker.ui.screens.Badge(
+            id = "five_times", emoji = "🖐️", name = "五次郎",
+            desc = "今天喝5次以上", unlocked = todayRecords.value.size >= 5,
+            progress = if (todayRecords.value.size < 5) "${todayRecords.value.size}/5次" else "已解锁"
+        ))
+
+        // 25. 十全十美 🔟 (今天喝10次以上)
+        badges.add(com.drink.watertracker.ui.screens.Badge(
+            id = "ten_times", emoji = "🔟", name = "十全十美",
+            desc = "今天喝10次以上", unlocked = todayRecords.value.size >= 10,
+            progress = if (todayRecords.value.size < 10) "${todayRecords.value.size}/10次" else "已解锁"
+        ))
+
+        // 26. 饮水达人 🎓 (累计500L)
+        badges.add(com.drink.watertracker.ui.screens.Badge(
+            id = "total_500l", emoji = "🎓", name = "饮水达人",
+            desc = "累计喝500L水", unlocked = totalMl >= 500000,
+            progress = if (totalMl < 500000) "${totalMl / 1000}L/500L" else "已解锁"
+        ))
+
+        // 27. 黎明战士 🗡️ (6点前喝水)
+        val dawnRecords = todayRecords.value.filter {
+            val hour = java.time.Instant.ofEpochMilli(it.timestamp)
+                .atZone(java.time.ZoneId.systemDefault()).hour
+            hour < 6
+        }
+        badges.add(com.drink.watertracker.ui.screens.Badge(
+            id = "dawn_warrior", emoji = "🗡️", name = "黎明战士",
+            desc = "6点前起床喝水", unlocked = dawnRecords.isNotEmpty()
+        ))
+
+        // 28. 满载而归 🌈 (超额200%)
+        badges.add(com.drink.watertracker.ui.screens.Badge(
+            id = "over_200", emoji = "🌈", name = "满载而归",
+            desc = "今日超标200%", unlocked = goal > 0 && todayTotal >= goal * 2f
+        ))
+
+        // 29. 坚持一周 📅 (记录7天，不要求连续)
+        badges.add(com.drink.watertracker.ui.screens.Badge(
+            id = "week_record", emoji = "📅", name = "坚持一周",
+            desc = "累计记录7天", unlocked = totalDays >= 7,
+            progress = if (totalDays < 7) "$totalDays/7天" else "已解锁"
+        ))
+
+        // 30. 月度之星 🌟 (记录30天)
+        badges.add(com.drink.watertracker.ui.screens.Badge(
+            id = "month_star", emoji = "🌟", name = "月度之星",
+            desc = "累计记录30天", unlocked = totalDays >= 30,
+            progress = if (totalDays < 30) "$totalDays/30天" else "已解锁"
+        ))
+
         _achievements.value = badges
     }
 
@@ -270,5 +399,9 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             .apply()
         _backgroundUri.value = uri
         _backgroundBlur.value = blur
+    }
+
+    fun setReminderMessage(message: String) {
+        settings.setReminderMessage(message)
     }
 }

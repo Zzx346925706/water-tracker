@@ -283,6 +283,15 @@ private fun ShareStat(emoji: String, label: String, value: String) {
     }
 }
 
+private fun colorToIntCompose(color: Color): Int {
+    return android.graphics.Color.argb(
+        (color.alpha * 255).toInt(),
+        (color.red * 255).toInt(),
+        (color.green * 255).toInt(),
+        (color.blue * 255).toInt()
+    )
+}
+
 private fun generateShareBitmap(
     context: Context, total: Int, goal: Int, percent: Float,
     dateStr: String, dayName: String, primaryColor: Color, lightColor: Color
@@ -292,15 +301,19 @@ private fun generateShareBitmap(
     val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
     val canvas = Canvas(bitmap)
 
-    // 背景渐变
+    // 背景渐变 - 跟随主题色
+    val primaryInt = colorToIntCompose(primaryColor)
+    val lightInt = colorToIntCompose(lightColor)
+    val brightColor = android.graphics.Color.argb(
+        255,
+        ((primaryColor.red * 255).toInt() + 50).coerceAtMost(255),
+        ((primaryColor.green * 255).toInt() + 50).coerceAtMost(255),
+        ((primaryColor.blue * 255).toInt() + 50).coerceAtMost(255)
+    )
     val bgPaint = Paint().apply {
         shader = LinearGradient(
             0f, 0f, 0f, height.toFloat(),
-            intArrayOf(
-                android.graphics.Color.parseColor("#FFFF6F00"),
-                android.graphics.Color.parseColor("#FFFF8F00"),
-                android.graphics.Color.parseColor("#FFFFAB40")
-            ),
+            intArrayOf(primaryInt, lightInt, brightColor),
             null, Shader.TileMode.CLAMP
         )
     }

@@ -52,11 +52,13 @@ fun SettingsScreen(
     val enabled by viewModel.reminderEnabled.collectAsState()
     val bgUri by viewModel.backgroundUri.collectAsState()
     val bgBlur by viewModel.backgroundBlur.collectAsState()
+    val reminderMsg by viewModel.reminderMessage.collectAsState()
 
     var goalText by remember(goal) { mutableStateOf(goal.toString()) }
     var intervalText by remember(interval) { mutableStateOf(interval.toString()) }
     var showBgPicker by remember { mutableStateOf(false) }
     var selectedUri by remember { mutableStateOf<Uri?>(null) }
+    var reminderMsgText by remember(reminderMsg) { mutableStateOf(reminderMsg) }
 
     val dayTheme = ShinchanTheme.todayTheme()
 
@@ -352,6 +354,84 @@ fun SettingsScreen(
                                         )
                                     )
                                 }
+                            }
+
+                            Spacer(Modifier.height(12.dp))
+
+                            // 自定义提醒语
+                            Text(
+                                "💬 自定义提醒语",
+                                style = MaterialTheme.typography.bodyLarge,
+                                fontWeight = FontWeight.Medium
+                            )
+                            Spacer(Modifier.height(4.dp))
+                            Text(
+                                "留空则使用随机趣味提醒语",
+                                fontSize = 12.sp,
+                                color = Color.Gray
+                            )
+                            Spacer(Modifier.height(8.dp))
+                            OutlinedTextField(
+                                value = reminderMsgText,
+                                onValueChange = { reminderMsgText = it },
+                                label = { Text("提醒语") },
+                                placeholder = { Text("再不喝水，你的细胞就要渴哭啦 😭") },
+                                singleLine = true,
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                            Spacer(Modifier.height(8.dp))
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                Button(
+                                    onClick = {
+                                        viewModel.setReminderMessage(reminderMsgText)
+                                    },
+                                    colors = ButtonDefaults.buttonColors(containerColor = dayTheme.primary),
+                                    shape = RoundedCornerShape(12.dp),
+                                    modifier = Modifier.weight(1f)
+                                ) { Text("保存") }
+                                OutlinedButton(
+                                    onClick = {
+                                        reminderMsgText = ""
+                                        viewModel.setReminderMessage("")
+                                    },
+                                    shape = RoundedCornerShape(12.dp),
+                                    modifier = Modifier.weight(1f)
+                                ) { Text("恢复默认") }
+                            }
+
+                            Spacer(Modifier.height(8.dp))
+
+                            // 预设提醒语
+                            Text("快速选择：", fontSize = 12.sp, color = Color.Gray)
+                            Spacer(Modifier.height(4.dp))
+                            val presets = listOf(
+                                "再不喝水，你的细胞就要渴哭啦 😭",
+                                "水是生命之源，喝一口活到九十九 🧓",
+                                "你的身体在喊：给我水！💧",
+                                "喝水五分钟，健康两小时 ⏰",
+                                "今天的你，值得一杯水的奖励 🏆"
+                            )
+                            presets.forEach { preset ->
+                                Text(
+                                    preset,
+                                    fontSize = 12.sp,
+                                    color = dayTheme.primary,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(vertical = 2.dp)
+                                        .clickable {
+                                            reminderMsgText = preset
+                                            viewModel.setReminderMessage(preset)
+                                        }
+                                        .background(
+                                            dayTheme.primary.copy(alpha = 0.05f),
+                                            RoundedCornerShape(8.dp)
+                                        )
+                                        .padding(horizontal = 8.dp, vertical = 6.dp)
+                                )
                             }
                         }
                     }

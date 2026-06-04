@@ -17,16 +17,33 @@ class ReminderWorker(
     params: WorkerParameters
 ) : CoroutineWorker(ctx, params) {
 
+    private val funMessages = listOf(
+        "再不喝水，你的细胞就要渴哭啦 😭",
+        "水是生命之源，喝一口活到九十九 🧓",
+        "你的身体在喊：给我水！💧",
+        "喝水五分钟，健康两小时 ⏰",
+        "别等渴了才想起水，它会伤心的 💔",
+        "今天的你，值得一杯水的奖励 🏆",
+        "喝杯水，给肾脏放个假 🏖️",
+        "水喝够了，皮肤都在发光 ✨",
+        "你已经很棒了，再喝杯水就更棒了 💪",
+        "小新说：喝水也要动感超人式！🔥"
+    )
+
     override suspend fun doWork(): Result {
         val dao = (applicationContext as WaterApp).database.waterDao()
         val today = java.time.LocalDate.now().toString()
         val total = dao.getTotalByDate(today).first()
-        val goal = applicationContext.getSharedPreferences("settings", Context.MODE_PRIVATE)
-            .getInt("daily_goal", 2000)
+        val prefs = applicationContext.getSharedPreferences("settings", Context.MODE_PRIVATE)
+        val goal = prefs.getInt("daily_goal", 2000)
+        val customMsg = prefs.getString("reminder_message", "") ?: ""
 
         val remaining = (goal - total).coerceAtLeast(0)
-        val text = if (remaining > 0) {
-            "你今天已经喝了 ${total}ml，还差 ${remaining}ml 就达标啦！"
+        val text = if (customMsg.isNotBlank()) {
+            customMsg
+        } else if (remaining > 0) {
+            val funMsg = funMessages.random()
+            "今天已喝 ${total}ml，还差 ${remaining}ml\n$funMsg"
         } else {
             "恭喜！今天的喝水目标已完成 🎉"
         }
